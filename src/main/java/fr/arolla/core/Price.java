@@ -1,10 +1,10 @@
-package fr.arolla;
+package fr.arolla.core;
 
 /**
  *
  */
 public class Price {
-    private int cents;
+    private final int cents;
 
     public Price(int cents){
         this.cents=cents;
@@ -12,10 +12,6 @@ public class Price {
 
     public int getCents() {
         return cents;
-    }
-
-    public void setCents(int cents) {
-        this.cents = cents;
     }
 
     @Override
@@ -29,11 +25,8 @@ public class Price {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Price price = (Price) o;
-
         return cents == price.cents;
-
     }
 
     @Override
