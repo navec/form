@@ -65,4 +65,15 @@ public class Journey {
     public Price getBillablePrice() {
         return billablePrice;
     }
+
+    @Override
+    public String toString() {
+        return "Journey{" +
+                "id='" + id + '\'' +
+                ", date=" + date +
+                ", type='" + type + '\'' +
+                ", price=" + price +
+                ", billablePrice=" + billablePrice +
+                '}';
+    }
 }

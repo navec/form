@@ -40,4 +40,12 @@ public class Price {
     public int hashCode() {
         return cents;
     }
+
+    public Price add(Price price) {
+        return new Price(price.getCents()+this.cents);
+    }
+
+    public Price minus(Price price) {
+        return new Price(this.cents-price.getCents());
+    }
 }
