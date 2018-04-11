@@ -1,7 +1,9 @@
-package fr.arolla;
+package fr.arolla.jour2;
 
 import com.ibm.mainframe.WdkRefCustContainerRoot;
 import com.ibm.mainframe.WdkRefCustInformations;
+import fr.arolla.Journey;
+import fr.arolla.Travels;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -23,7 +25,7 @@ public class RandomTravels implements Travels {
             WdkRefCustContainerRoot instance = WdkRefCustContainerRoot.getInstance();
             Journey journey = new Journey();
             journey.setId(instance.all().stream().skip(random.nextInt(7)).findAny().map(WdkRefCustInformations::getField04).orElse("0"));
-            journey.setType(Arrays.asList("1","2","3","4","5","6").stream().skip(random.nextInt(5)).findAny().orElse("2"));
+            journey.setType(Arrays.asList("1", "2", "3", "4", "5", "6").stream().skip(random.nextInt(5)).findAny().orElse("2"));
             journey.setDate(LocalDateTime.now().minusHours(random.nextInt(10)).minusDays(random.nextInt(30)));
             return journey;
         }).peek(System.out::println)
