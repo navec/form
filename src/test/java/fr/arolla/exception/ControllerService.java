@@ -24,7 +24,7 @@ public class ControllerService {
             doBidule(i);
             doingThis(i);
         } catch (Exception e){
-            throw new IllegalStateException("error");
+            throw new IllegalStateException("error", e);
         }
     }
 

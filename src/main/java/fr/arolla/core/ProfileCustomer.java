@@ -18,7 +18,7 @@ public enum  ProfileCustomer {
 
     public static ProfileCustomer form(String profile) {
         for (ProfileCustomer profileCustomer : values()) {
-            if(profileCustomer.getProfile().equals(profile)){
+            if (profileCustomer.getProfile().equals(profile)) {
                 return profileCustomer;
             }
         }
