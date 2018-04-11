@@ -1,5 +1,7 @@
 package fr.arolla;
 
+import fr.arolla.jour2.Price;
+
 import java.time.LocalDateTime;
 
 /**

@@ -13,71 +13,57 @@ public class BillingService {
     private Travels travels;
     private Customers customers = new Customers();
     private InvoiceNotifier notifier;
+    private Discounts discounts;
+    private Prices prices;
 
-    public BillingService(Travels travels) {
+    public BillingService(Travels travels, InvoiceNotifier notifier, Discounts discounts, Prices prices) {
         this.travels = travels;
+        this.notifier = notifier;
+        this.discounts = discounts;
+        this.prices = prices;
     }
 
-    public Price getBillableAmount(String cardNumber){
+    public DiscountedPrice getBillableAmount(String cardNumber) {
         Collection<Journey> journeys = travels.all();
+        Customer customer = customers.retrieveByCardNumber(cardNumber);
+        Discount discount = discounts.getDiscount(customer);
+        DiscountedPrice discountedPrice = journeys.stream().filter(journey -> journey.getId().equals(cardNumber))
+                .map(journey -> prices.getPrice(journey))
+                .map(price -> DiscountedPrice.from(price, discount.applyOn(price)))
+                .reduce(DiscountedPrice.from(Price.fromCents(0), Price.fromCents(0)), DiscountedPrice::add);
 
-        Price price = Price.fromCents(0);
 
-        for (Journey journey : journeys)
-            if (journey.getId().equals(cardNumber)) {
-                Customer customer = customers.retrieveByCardNumber(journey.getId());
-                Discount discount = getDiscount(customer);
-                price = price.add(discount.applyOn(getPrice(journey)));
-            }
-        System.out.println(price);
-        notifier.notify(cardNumber,price);
-        return price;
+        System.out.println(discountedPrice);
+        notifier.notify(cardNumber, discountedPrice);
+        return discountedPrice;
     }
 
-    private Price getPrice(Journey journey) {
+    public static class DiscountedPrice{
 
-        if(journey.getType().equals("1")){
-            return Price.fromCents(110);
-        }
-        if(journey.getType().equals("2")){
-            return Price.fromCents(125);
-        }
-        if(journey.getType().equals("3")){
-            return Price.fromCents(130);
-        }
-        if(journey.getType().equals("4")){
-            return Price.fromCents(240);
-        }
-        if(journey.getType().equals("5")){
-            return Price.fromCents(650);
-        }
-        if(journey.getType().equals("6")){
-            return Price.fromCents(800);
-        }
-        throw new IllegalArgumentException("invalid journey type");
-    }
+        private final Price price;
+        private final Price priceDiscounted;
 
+        private DiscountedPrice(Price price, Price priceDiscounted) {
+            this.price = price;
+            this.priceDiscounted = priceDiscounted;
+        }
 
-    private Discount getDiscount(Customer info) {
-        if(info.getProfile().equals("P6")){
-            return Discount.fromPercentage(15);
+        public Price getPrice() {
+            return price;
         }
-        if(info.getProfile().equals("P5")){
-            return Discount.fromPercentage(12);
+
+        public Price getPriceDiscounted() {
+            return priceDiscounted;
         }
-        if(info.getProfile().equals("P4")){
-            return Discount.fromPercentage(10);
+
+        public DiscountedPrice add(DiscountedPrice discountedPrice) {
+            return new DiscountedPrice(discountedPrice.price.add(this.price),
+                    discountedPrice.priceDiscounted.add(this.priceDiscounted));
         }
-        if(info.getProfile().equals("P3")){
-            return Discount.fromPercentage(5);
+
+        public static DiscountedPrice from(Price price, Price priceDiscounted) {
+            return new DiscountedPrice(price, priceDiscounted);
         }
-        if(info.getProfile().equals("P2")){
-            return Discount.fromPercentage(3);
-        }
-        if(info.getProfile().equals("P1")){
-            return Discount.fromPercentage(10);
-        }
-        throw new IllegalArgumentException(info.getProfile());
     }
 
 }

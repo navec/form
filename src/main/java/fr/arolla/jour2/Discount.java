@@ -5,7 +5,7 @@ package fr.arolla.jour2;
  */
 public class Discount {
 
-    private int percentage;
+    private final int percentage;
 
     private Discount(int percentages){
         this.percentage=percentages;
